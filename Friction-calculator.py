@@ -66,15 +66,27 @@ if __name__ == "__main__":
 
     try:
         times, frictions = read_time_and_friction_from_file(filename)
-        # Ask user for cycle size for averaging
-        cycle_size = simpledialog.askinteger("Cycle Size", "Enter number of points per friction cycle to average:", initialvalue=5, minvalue=1, maxvalue=len(frictions))
-        if not cycle_size:
-            messagebox.showerror("Error", "Invalid cycle size entered.")
+        total_points = len(frictions)
+        # Ask user for number of cycles
+        num_cycles = simpledialog.askinteger("Number of Cycles", "Enter the number of friction cycles:", initialvalue=50, minvalue=1, maxvalue=total_points)
+        if not num_cycles or num_cycles < 1:
+            messagebox.showerror("Error", "Invalid number of cycles entered.")
             exit()
-        averaged_friction = average_over_cycles([abs(f) for f in frictions], cycle_size)
-        # Output results per cycle (cycle number)
+        points_per_cycle = total_points // num_cycles
+        remainder = total_points % num_cycles
+
+        # Split frictions into num_cycles groups, distributing remainder points to the first groups
+        averaged_friction = []
+        start = 0
+        for i in range(num_cycles):
+            group_size = points_per_cycle + (1 if i < remainder else 0)
+            group = [abs(f) for f in frictions[start:start+group_size]]
+            avg = sum(group) / len(group) if group else 0
+            averaged_friction.append(avg)
+            start += group_size
+
         result_lines = [
-            "Cycle\tAveraged_Friction\tAveraged_Coefficient_of_Friction"
+            "Cycle\tAverage friction force (mN)\tAverage Coefficient of Friction",
         ]
         for i, f in enumerate(averaged_friction, start=1):
             mu = coefficient_of_friction(f, normal_force)
@@ -86,7 +98,7 @@ if __name__ == "__main__":
 
     # File save dialog
     export_filename = filedialog.asksaveasfilename(
-        title="Export averaged coefficient of friction vs time",
+        title="Export averaged coefficient of friction per cycle",
         defaultextension=".txt",
         filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")]
     )
