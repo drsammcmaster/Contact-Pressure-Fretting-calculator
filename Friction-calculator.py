@@ -72,14 +72,14 @@ if __name__ == "__main__":
             messagebox.showerror("Error", "Invalid cycle size entered.")
             exit()
         averaged_friction = average_over_cycles([abs(f) for f in frictions], cycle_size)
-        averaged_times = average_over_cycles(times, cycle_size)
+        # Output results per cycle (cycle number)
         result_lines = [
-            "Averaged_Time\tAveraged_Friction\tAveraged_Coefficient_of_Friction"
+            "Cycle\tAveraged_Friction\tAveraged_Coefficient_of_Friction"
         ]
-        for t, f in zip(averaged_times, averaged_friction):
-            mu = coefficient_of_friction(abs(f), normal_force)
-            result_lines.append(f"{t:.6f}\t{f:.6f}\t{mu:.6f}")
-        messagebox.showinfo("Result", "Averaged friction and coefficient of friction calculated over cycles.")
+        for i, f in enumerate(averaged_friction, start=1):
+            mu = coefficient_of_friction(f, normal_force)
+            result_lines.append(f"{i}\t{f:.6f}\t{mu:.6f}")
+        messagebox.showinfo("Result", "Averaged friction and coefficient of friction calculated per cycle.")
     except Exception as e:
         messagebox.showerror("Error", str(e))
         exit()
