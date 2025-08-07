@@ -31,8 +31,8 @@ def read_time_and_friction_from_file(filename):
                 frictions.append(friction)
     return times, frictions
 
-#Average the values over a specified number of cycles (groups).
-# This function takes a list of values and a cycle size, and returns the average for each group
+# Average the values over a specified number of cycles (groups).
+# This function takes a list of values and a cycle size, and returns the average for each group.
 
 def average_over_cycles(values, cycle_size):
     """Average the values over a specified number of cycles (groups)."""
@@ -65,7 +65,7 @@ if __name__ == "__main__":
         messagebox.showerror("Error", "Invalid normal force entered.")
         exit()
 
-    # Read time and friction data from the file and calculate the average friction force per cycle
+    # Read time and friction data from the file and calculate the maximum friction force per cycle and the coefficient of friction for each cycle.
 
     try:
         times, frictions = read_time_and_friction_from_file(filename)
@@ -79,24 +79,25 @@ if __name__ == "__main__":
         remainder = total_points % num_cycles
 
         # Split frictions into num_cycles groups, distributing remainder points to the first groups
-        averaged_friction = []
+        result_lines = [
+            "Cycle\tMax friction (mN)\tMin friction (mN)\tCoefficient of Friction",
+        ]
         start = 0
         for i in range(num_cycles):
             group_size = points_per_cycle + (1 if i < remainder else 0)
-            group = [abs(f) for f in frictions[start:start+group_size]]
-            avg = sum(group) / len(group) if group else 0
-            averaged_friction.append(avg)
+            group = frictions[start:start+group_size]
+            if group:
+                max_f = max(group)
+                min_f = min(group)
+                # Correct calculation: (max friction - min friction) / 2
+                calc_friction = (max_f - min_f) / 2
+                mu = coefficient_of_friction(calc_friction, normal_force)
+            else:
+                max_f = min_f = calc_friction = mu = 0
+            result_lines.append(f"{i+1}\t{max_f:.6f}\t{min_f:.6f}\t{mu:.6f}")
             start += group_size
 
-        # Prepare result lines with averaged friction and coefficient of friction
-
-        result_lines = [
-            "Cycle\tAverage friction force (mN)\tAverage Coefficient of Friction",
-        ]
-        for i, f in enumerate(averaged_friction, start=1):
-            mu = coefficient_of_friction(f, normal_force)
-            result_lines.append(f"{i}\t{f:.6f}\t{mu:.6f}")
-        messagebox.showinfo("Result", "Averaged friction and coefficient of friction calculated per cycle.")
+        messagebox.showinfo("Result", "Max, min, and coefficient of friction per cycle.")
     except Exception as e:
         messagebox.showerror("Error", str(e))
         exit()

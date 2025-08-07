@@ -13,10 +13,8 @@ def coefficient_of_friction(friction_force, normal_force):
         raise ValueError("Normal force cannot be zero.")
     return friction_force / normal_force
 
-def rms(values):
-    if not values:
-        raise ValueError("Empty list provided for RMS calculation.")
-    return math.sqrt(sum(v**2 for v in values) / len(values))
+# Function to read time and friction data from a file
+# Each line in the file should contain time and friction force separated by whitespace
 
 def read_time_and_friction_from_file(filename):
     times = []
@@ -32,6 +30,9 @@ def read_time_and_friction_from_file(filename):
                 times.append(time)
                 frictions.append(friction)
     return times, frictions
+
+# Average the values over a specified number of cycles (groups).
+# This function takes a list of values and a cycle size, and returns the average for each group.
 
 def average_over_cycles(values, cycle_size):
     """Average the values over a specified number of cycles (groups)."""
@@ -64,6 +65,8 @@ if __name__ == "__main__":
         messagebox.showerror("Error", "Invalid normal force entered.")
         exit()
 
+    # Read time and friction data from the file and calculate the maximum friction force per cycle and the coefficient of friction for each cycle.
+
     try:
         times, frictions = read_time_and_friction_from_file(filename)
         total_points = len(frictions)
@@ -84,6 +87,8 @@ if __name__ == "__main__":
             max_val = max(group) if group else 0
             max_friction.append(max_val)
             start += group_size
+
+        # Prepare result lines with max friction and coefficient of friction
 
         result_lines = [
             "Cycle\tMax friction force (mN)\tMax Coefficient of Friction",
