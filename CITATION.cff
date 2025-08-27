@@ -1,0 +1,29 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Contact Pressure Fretting Calculator
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Samuel James
+    name-suffix: PhD
+    family-names: McMaster
+    email: ad6423@coventry.ac.uk
+    affiliation: Coventry University
+    orcid: 'https://orcid.org/0000-0002-7339-2469'
+repository-code: >-
+  https://github.com/drsammcmaster/Contact-Pressure-Fretting-calculator
+url: 'https://linktr.ee/drsammcmaster'
+abstract: >-
+  A calculator for Hertzian contact pressure, fretting
+  regime estimation via sliding ratio and friction
+  coefficient calculator.
+keywords:
+  - Fretting
+  - Coefficient of Friction
+  - Hertzian Contact Pressure
+license: GPL-3.0
+date-released: '2025-08-27'
